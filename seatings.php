@@ -28,6 +28,8 @@
     "ld" => 3.5
   );
   
+  $deepSearchSteps = 0;
+  
   
   class BestSeating{
     protected $namesPermutation;
@@ -55,7 +57,9 @@
         }
   
         $this->bestSeatings[] = new BestSeating($namesPermutation);
+        return true;
       }
+      return false;
     }
   }
   
@@ -93,7 +97,7 @@
   
   
   
-  function computePeopleOnSpecificSeatsWeight($namesPermutation){
+  function computeWeight4PeopleOnSpecificSeats($namesPermutation){
     $weight = 0;
     $personsSeating = wherePersonSits($namesPermutation);
     
@@ -106,6 +110,48 @@
     
     return $weight;
   }
+  
+  
+  function deepSearch($namesPermutation){
+    $currentWeight = computeWeight4PeopleOnSpecificSeats($namesPermutation);
+    if($GLOBALS["bestSeatings"]->addSeatingsIfItHasBestWeight($namesPermutation, $currentWeight)){
+      debug("deepSearchSteps", $GLOBALS["deepSearchSteps"]);
+      debug("currentWeight", $currentWeight);
+      debug("namesPermutation", $namesPermutation);
+      
+      $GLOBALS["deepSearchSteps"]++;
+ 
+      $switches = generateSwitches($namesPermutation);
+      
+      foreach($switches as $switchedPermutation)
+        deepSearch($switchedPermutation);
+    }    
+  }
+  
+  
+  function switchValues(&$a, &$b){
+     $c = $a;
+     $a = $b;
+     $b = $c;
+  }
+  
+  
+  function generateSwitches($namesPermutation){
+    $ret = array();
+    
+    for($i = 0; $i < count($namesPermutation); $i++){
+      for($j = $i + 1; $j < count($namesPermutation); $j++){
+        $switchedPermutation = $namesPermutation;
+      
+        switchValues($switchedPermutation[$i], $switchedPermutation[$j]);
+        
+        $ret[] = $switchedPermutation;
+      }
+    }
+    
+    return $ret;
+  }
+  
   
   
   function allPermutations($arr){
@@ -130,6 +176,13 @@
   }
   
   
+  function debug($name, $value){
+    echo $name . ": ";
+    print_r($value);
+    echo "\n";
+  }
+  
+  
   
   //initial configuration - BEGIN
   fillReverseSeats();
@@ -149,20 +202,19 @@
   
   $bestSeatings = new Bestseatings();
   
+  /*
   foreach(allPermutations($names) as $permutation){
-    print_r($permutation);
-    
-    $weight = computePeopleOnSpecificSeatsWeight($permutation);
-    echo "weight: " . $weight . "\n\n";
-    
+    $weight = computeWeight4PeopleOnSpecificSeats($permutation);
     $bestSeatings->addSeatingsIfItHasBestWeight($permutation, $weight);
   }
+  */
   
-  print_r(allPermutations($names));
+  deepSearch($names);
   
   echo "----------------------------\n----------------------------\n";
+  debug("deepSearchSteps", $deepSearchSteps);
   
   print_r($bestSeatings);
-  
+ 
   
 ?>
