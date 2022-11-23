@@ -29,6 +29,37 @@
   );
   
   
+  class BestSeating{
+    protected $namesPermutation;
+    
+    function __construct($namesPermutation){
+      $this->namesPermutation = $namesPermutation; 
+    }
+  }
+  
+  
+  class BestSeatings{
+    protected $weight;
+    protected $bestSeatings;
+    
+    function __construct(){
+      $this->weight = 1000000000;
+      $this->bestSeatings = array(); 
+    }
+
+    function addSeatingsIfItHasBestWeight($namesPermutation, $weight){
+      if($weight <= $this->weight){
+        if($weight < $this->weight){
+          $this->weight = $weight;
+          $this->bestSeatings = array();
+        }
+  
+        $this->bestSeatings[] = new BestSeating($namesPermutation);
+      }
+    }
+  }
+  
+  
   function fillReverseSeats(){
     foreach($GLOBALS["seats"] as $seatKey => $seatValue){
       foreach($seatValue as $seatPairKey => $setPairValue){
@@ -116,12 +147,22 @@
 
   print_r($seatsCoordinates);
   
+  $bestSeatings = new Bestseatings();
+  
   foreach(allPermutations($names) as $permutation){
     print_r($permutation);
-    echo "weight: " . computePeopleOnSpecificSeatsWeight($permutation) . "\n\n";
+    
+    $weight = computePeopleOnSpecificSeatsWeight($permutation);
+    echo "weight: " . $weight . "\n\n";
+    
+    $bestSeatings->addSeatingsIfItHasBestWeight($permutation, $weight);
   }
   
   print_r(allPermutations($names));
+  
+  echo "----------------------------\n----------------------------\n";
+  
+  print_r($bestSeatings);
   
   
 ?>
