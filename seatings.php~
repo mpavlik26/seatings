@@ -1,11 +1,10 @@
 <?php
   $interactions = array(
-    "Vavrecka" => array(                   "Roztocil" => 4.0, "Nosek" => 3.0, "Subrt" => 2.0, "Machart" =>  1.0),
-    "Roztocil" => array("Vavrecka" => 4.0,                    "Nosek" => 2.5, "Subrt" => 2.5, "Machart" =>  1.0),
-    "Nosek"    => array("Vavrecka" => 3.0, "Roztocil" => 1.0,                 "Subrt" => 5.0, "Machart" =>  1.0),
-    "Subrt"    => array("Vavrecka" => 3.5, "Roztocil" => 1.0, "Nosek" => 5.0,                 "Machart" =>  1.0),
-    "Machart"  => array("Vavrecka" => 1.8, "Roztocil" => 1.8, "Nosek" => 2.0, "Subrt" => 1.8                   ),
-    "X1"       => array()
+    "Vavrecka" => array("Vavrecka" => 6.0, "Roztocil" => 4.0, "Nosek" => 3.0, "Subrt" => 2.0, "Machart" =>  1.0),
+    "Roztocil" => array("Vavrecka" => 4.0, "Roztocil" => 8.5, "Nosek" => 2.5, "Subrt" => 2.5, "Machart" =>  1.0),
+    "Nosek"    => array("Vavrecka" => 3.0, "Roztocil" => 1.0, "Nosek" => 6.0, "Subrt" => 5.0, "Machart" =>  1.0),
+    "Subrt"    => array("Vavrecka" => 3.5, "Roztocil" => 1.0, "Nosek" => 5.0, "Subrt" => 6.5, "Machart" =>  1.0),
+    "Machart"  => array("Vavrecka" => 1.8, "Roztocil" => 1.8, "Nosek" => 2.0, "Subrt" => 1.8, "Machart" => 10.0)
   );
   
   $names = array();
@@ -48,32 +47,14 @@
   }
   
   
-  function wherePersonSits($namesPermutation){
-    $ret = array();
-    $i = 0;
+  function computePeopleOnSpecificSeatsWeight($seats){
+    $weitght = 0;
     
-    foreach($namesPermutation as $name){
-      $ret[$name] = $GLOBALS["seatsCoordinates"][$i];
-      $i++;
+    foreach($GLOBALS["interactions"] as $personInteractions){
+      foreach($personInteractions as $partyName => $partyHours){
+        $weight += 0;
+      }
     }
-    
-    return $ret;
-  }
-  
-  
-  
-  function computePeopleOnSpecificSeatsWeight($namesPermutation){
-    $weight = 0;
-    $personsSeating = wherePersonSits($namesPermutation);
-    
-    foreach($GLOBALS["interactions"] as $name => $nameInteractions){
-      $nameSeat = $personsSeating[$name];
-      
-      foreach($nameInteractions as $nameInteraction => $hoursInteraction)
-        $weight += $hoursInteraction * $GLOBALS["distances"][$GLOBALS["seats"][$nameSeat][$personsSeating[$nameInteraction]]];
-    }
-    
-    return $weight;
   }
   
   
@@ -116,12 +97,6 @@
 
   print_r($seatsCoordinates);
   
-  foreach(allPermutations($names) as $permutation){
-    print_r($permutation);
-    echo "weight: " . computePeopleOnSpecificSeatsWeight($permutation) . "\n\n";
-  }
-  
-  print_r(allPermutations($names));
-  
+  print_r(allPermutations($seatsCoordinates));
   
 ?>
